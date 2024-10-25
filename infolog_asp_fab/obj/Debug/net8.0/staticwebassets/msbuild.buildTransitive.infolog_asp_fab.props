@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\infolog_asp_fab.props" />
+</Project>
