@@ -5,3 +5,8 @@
 *.userosscache
 *.sln.docstates
 .vs/
+mysql_data/
+*.sock
+*.cnf
+*.index
+ib_buffer_pool
