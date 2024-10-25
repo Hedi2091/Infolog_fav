@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "infolog_asp_fab", "infolog_asp_fab\infolog_asp_fab.csproj", "{815B3AA4-EC36-41EC-BAD7-F554B46274AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{815B3AA4-EC36-41EC-BAD7-F554B46274AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{815B3AA4-EC36-41EC-BAD7-F554B46274AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{815B3AA4-EC36-41EC-BAD7-F554B46274AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{815B3AA4-EC36-41EC-BAD7-F554B46274AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F319A73B-6990-4FB9-B01B-1973B2440F93}
+	EndGlobalSection
+EndGlobal
