@@ -246,26 +246,22 @@ namespace infolog_asp_fab.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("IdClients");
 
-                    b.ToTable("Clients", (string)null);
+                    b.ToTable("Client", (string)null);
                 });
 
             modelBuilder.Entity("infolog_asp_fab.Models.Produit", b =>
                 {
-                    b.Property<int>("IdProduits")
+                    b.Property<int>("IdProduit")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("IdProduits"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("IdProduit"));
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -287,9 +283,9 @@ namespace infolog_asp_fab.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("IdProduits");
+                    b.HasKey("IdProduit");
 
-                    b.ToTable("Produits", (string)null);
+                    b.ToTable("Produit", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -12,8 +12,8 @@ namespace infolog_asp_fab.Data
         {
         }
 
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Produit> Produits { get; set; }
+        public DbSet<Client> Client { get; set; }
+        public DbSet<Produit> Produit { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,8 +27,8 @@ namespace infolog_asp_fab.Data
             }
 
             // Configure les noms de tables correspondants si nécessaire
-            modelBuilder.Entity<Client>().ToTable("Clients");
-            modelBuilder.Entity<Produit>().ToTable("Produits");
+            modelBuilder.Entity<Client>().ToTable("Client");
+            modelBuilder.Entity<Produit>().ToTable("Produit");
             modelBuilder.Entity<Client>().HasKey(c => c.IdClients);
             modelBuilder.Entity<Produit>().HasKey(p => p.IdProduits);
         }

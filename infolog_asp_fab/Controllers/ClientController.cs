@@ -1,10 +1,12 @@
 ﻿using infolog_asp_fab.Data;
 using infolog_asp_fab.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace infolog_asp_fab.Controllers
 {
+    [Authorize]
     public class ClientController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,111 +19,105 @@ namespace infolog_asp_fab.Controllers
         // Afficher la liste des clients
         public async Task<IActionResult> Index()
         {
-            var clients = await _context.Clients.ToListAsync();
+            var clients = await _context.Client.ToListAsync();
             return View(clients);
         }
 
-        // Ajouter un client (GET)
-        public IActionResult Create()
+        // Récupérer les détails d'un client (GET) pour AJAX
+        [HttpGet]
+        public async Task<IActionResult> GetClientDetails(int id)
         {
-            return View();
+            var client = await _context.Client.FindAsync(id);
+            if (client == null)
+            {
+                return Json(new { success = false, message = "Client introuvable." });
+            }
+
+            return Json(new { success = true, data = client });
         }
 
-        // Ajouter un client (POST)
+        // Ajouter un client (POST) via AJAX
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Client client)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(client);
-        }
-
-        // Modifier un client (GET)
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-            return View(client);
-        }
-
-        // Modifier un client (POST)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Client client)
-        {
-            if (id != client.IdClients)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
                 try
                 {
-                    _context.Update(client);
+                    _context.Client.Add(client);
                     await _context.SaveChangesAsync();
+                    return Json(new { success = true });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!ClientExists(client.IdClients))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return Json(new { success = false, message = ex.InnerException?.Message ?? ex.Message });
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(client);
+
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                           .Select(e => e.ErrorMessage)
+                                           .ToList();
+            return Json(new { success = false, errors });
         }
 
-        // Supprimer un client (GET)
-        public async Task<IActionResult> Delete(int? id)
+        /// Modifier un client (POST) via AJAX
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.IdClients == id);
+            var client = await _context.Client.FindAsync(id);
             if (client == null)
             {
                 return NotFound();
             }
-
-            return View(client);
+            return Json(client); // Retourne les données du client en JSON
         }
+        //
 
-        // Supprimer un client (POST)
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        public async Task<IActionResult> Edit_clients(Client client)
         {
-            var client = await _context.Clients.FindAsync(id);
-            _context.Clients.Remove(client);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = "Les données sont invalides.", errors = errors });
+            }
+
+            var existingClient = await _context.Client.FindAsync(client.IdClients);
+            if (existingClient == null)
+            {
+                return Json(new { success = false, message = "Client introuvable." });
+            }
+
+            // Met à jour les informations du client
+            existingClient.FirstName = client.FirstName;
+            existingClient.LastName = client.LastName;
+            existingClient.Email = client.Email;
+            existingClient.PhoneNumber = client.PhoneNumber;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var client = await _context.Client.FindAsync(id);
+            if (client == null)
+            {
+                return Json(new { success = false, message = "Client introuvable." });
+            }
+
+            _context.Client.Remove(client);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Json(new { success = true });
         }
 
-        private bool ClientExists(int id)
-        {
-            return _context.Clients.Any(e => e.IdClients == id);
-        }
     }
 }

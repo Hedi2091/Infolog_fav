@@ -5,7 +5,7 @@
 namespace infolog_asp_fab.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedMigration : Migration
+    public partial class InitialCleanMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

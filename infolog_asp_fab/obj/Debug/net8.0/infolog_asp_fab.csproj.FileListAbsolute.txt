@@ -272,3 +272,4 @@ C:\Users\Hédi Bannour\source\repos\infolog_asp_fab\infolog_asp_fab\bin\Debug\ne
 C:\Users\Hédi Bannour\source\repos\infolog_asp_fab\infolog_asp_fab\bin\Debug\net8.0\MimeKit.dll
 C:\Users\Hédi Bannour\source\repos\infolog_asp_fab\infolog_asp_fab\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
 C:\Users\Hédi Bannour\source\repos\infolog_asp_fab\infolog_asp_fab\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Hédi Bannour\source\repos\infolog_asp_fab\infolog_asp_fab\obj\Debug\net8.0\infolog_asp_fab.sourcelink.json

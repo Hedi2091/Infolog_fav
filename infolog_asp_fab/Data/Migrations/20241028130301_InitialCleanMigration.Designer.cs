@@ -12,8 +12,8 @@ using infolog_asp_fab.Data;
 namespace infolog_asp_fab.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241023155544_UpdatedMigration")]
-    partial class UpdatedMigration
+    [Migration("20241028130301_InitialCleanMigration")]
+    partial class InitialCleanMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,17 +249,13 @@ namespace infolog_asp_fab.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("IdClients");
 
-                    b.ToTable("Clients", (string)null);
+                    b.ToTable("Client", (string)null);
                 });
 
             modelBuilder.Entity("infolog_asp_fab.Models.Produit", b =>
@@ -292,7 +288,7 @@ namespace infolog_asp_fab.Data.Migrations
 
                     b.HasKey("IdProduits");
 
-                    b.ToTable("Produits", (string)null);
+                    b.ToTable("Produit", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

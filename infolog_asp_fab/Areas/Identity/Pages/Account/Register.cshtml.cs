@@ -100,11 +100,11 @@ namespace infolog_asp_fab.Areas.Identity.Pages.Account
         }
 
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public void OnGet(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-
         }
+
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {

@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<infolog_asp_fab.Models.Client>
 
-<h1>Liste des Clients</h1>
-<a class="btn btn-primary" asp-action="Create">Ajouter un Client</a>
+<h2>Liste des Clients</h2>
+
+<button class="btn btn-primary" data-toggle="modal" data-target="#addClientModal">Ajouter un Client</button>
+
 <table class="table">
     <thead>
         <tr>
@@ -10,6 +12,7 @@
             <th>Nom</th>
             <th>Email</th>
             <th>Téléphone</th>
+            <th>Adresse</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -22,11 +25,181 @@
                 <td>@client.LastName</td>
                 <td>@client.Email</td>
                 <td>@client.PhoneNumber</td>
+                <td>@client.Address</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@client.IdClients" class="btn btn-warning">Modifier</a>
-                    <a asp-action="Delete" asp-route-id="@client.IdClients" class="btn btn-danger">Supprimer</a>
+                    <button class="btn btn-warning btn-sm edit-btn" data-id="@client.IdClients">Éditer</button>
+                   <button class="btn btn-danger btn-sm delete-btn" data-id="@client.IdClients">Supprimer</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Modal pour l'ajout de client -->
+<div class="modal fade" id="addClientModal" tabindex="-1" role="dialog" aria-labelledby="addClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addClientModalLabel">Ajouter un Client</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Inclure la vue partielle pour le formulaire de client -->
+                <partial name="_ClientForm" model="new infolog_asp_fab.Models.Client()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour éditer un client -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Modifier le Client</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editClientId" name="IdClients" />
+                    <div class="form-group">
+                        <label for="editFirstName">Prénom</label>
+                        <input type="text" class="form-control" id="editFirstName" name="FirstName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="editLastName">Nom</label>
+                        <input type="text" class="form-control" id="editLastName" name="LastName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="Email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhoneNumber">Téléphone</label>
+                        <input type="text" class="form-control" id="editPhoneNumber" name="PhoneNumber" />
+                    </div>
+                    <div class="form-group">
+                        <label for="editAddress">Adresse</label>
+                        <input type="text" class="form-control" id="editAddress" name="Address" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $('#clientForm').on('submit', function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/Client/Create',
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $('#addClientModal').modal('hide');
+                        location.reload(); // Recharge la page pour actualiser la liste des clients
+                    } else {
+                        if (response.errors) {
+                            alert('Erreurs de validation : ' + response.errors.join(', '));
+                        } else {
+                            alert('Erreur lors de l\'ajout du client : ' + response.message);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Une erreur réseau est survenue : ' + textStatus + ' - ' + errorThrown);
+                }
+            });
+        });
+
+    </script>
+    <script>
+    $(document).ready(function () {
+        // Ouvrir la modal avec les informations du client
+        $('.edit-btn').click(function () {
+            const clientId = $(this).data('id');
+            $.get(`/Client/Edit/${clientId}`, function (client) {
+                $('#editClientId').val(client.idClients);
+                $('#editFirstName').val(client.firstName);
+                $('#editLastName').val(client.lastName);
+                $('#editEmail').val(client.email);
+                $('#editPhoneNumber').val(client.phoneNumber);
+                $('#editAddress').val(client.address);
+                $('#editModal').modal('show'); // Afficher la modal
+            }).fail(function () {
+                alert("Erreur lors de la récupération des informations du client.");
+            });
+        });
+
+        // Envoyer le formulaire en AJAX pour enregistrer les modifications
+        $('#editForm').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: `/Client/Edit_clients`,
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        $('#editModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert(response.message || "Une erreur est survenue.");
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(`Erreur : ${textStatus} - ${errorThrown}`);
+                }
+            });
+        });
+        $('#editModal .close').on('click', function () {
+            $('#editModal').modal('hide'); // Ferme la modal
+        });
+    });
+    $(document).ready(function () {
+    // Code pour gérer la suppression via AJAX
+    $('.delete-btn').click(function () {
+        const clientId = $(this).data('id');
+        
+        if (confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) { // Demande de confirmation
+            $.ajax({
+                url: `/Client/Delete/${clientId}`, // L'URL de l'action Delete
+                type: 'POST',
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Nécessaire si vous utilisez des tokens anti-CSRF
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert("Client supprimé avec succès !");
+                        location.reload(); // Recharge la page pour actualiser la liste des clients
+                    } else {
+                        alert("Erreur lors de la suppression : " + response.message);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("Une erreur est survenue : " + textStatus + " - " + errorThrown);
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+
+}
+
